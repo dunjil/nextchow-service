@@ -171,6 +171,7 @@ async def send_reg_otp_mail(reciever_email: str, reciever_name: str, otp: str):
         print(f"Error: {response.status_code} - {response.text}")
         return False
 
+
 async def send_password_reset_otp(reciever_email: str, reciever_name: str, otp: str):
     url = "https://api.mailersend.com/v1/email"
 

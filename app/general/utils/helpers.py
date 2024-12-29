@@ -1,6 +1,5 @@
-from math import atan2, cos, radians, sin, sqrt
-
 from bson import ObjectId
+
 
 class PyObjectId(ObjectId):
     @classmethod
@@ -20,10 +19,10 @@ class PyObjectId(ObjectId):
             raise ValueError("Invalid ObjectId")
 
         return ObjectId(value)
+
     @classmethod
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string", format="objectid")
-
 
 
 def prepare_json(data):

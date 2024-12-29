@@ -1,12 +1,16 @@
 from datetime import datetime
-from typing import Optional,List
+from typing import List, Optional
+
 from bson import ObjectId
-from pydantic import BaseModel, Field,EmailStr
+from pydantic import BaseModel, EmailStr, Field
+
 from app.general.utils.helpers import PyObjectId
+
 
 class Location(BaseModel):
     type: str = "Point"
     coordinates: List[float] = Field(default_factory=lambda: [0.0, 0.0])
+
 
 class OperatingHours(BaseModel):
     day: str
@@ -15,20 +19,17 @@ class OperatingHours(BaseModel):
 
     class Config:
         schema_extra = {
-            "example": {
-                "day": "Monday",
-                "open_time": "08:00",
-                "close_time": "18:00"
-            }
+            "example": {"day": "Monday", "open_time": "08:00", "close_time": "18:00"}
         }
+
 
 class SignUpSchema(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     first_name: str
     last_name: str
     email: EmailStr
-    password:str
-    role:str
+    password: str
+    role: str
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: Optional[datetime] = None
 
@@ -42,18 +43,17 @@ class SignUpSchema(BaseModel):
                 "last_name": "Doe",
                 "email": "jd@gmail.com",
                 "password": "******************",
-                "role":"merchant"
+                "role": "merchant",
             }
         }
-
 
 
 class BusinessProfileSchema(BaseModel):
     store_name: str
     description: str
-    location:Location
+    location: Location
     address: str
-    phone:str
+    phone: str
     cover_picture: str
     profile_picture: str
     order_type: str
@@ -72,22 +72,22 @@ class BusinessProfileSchema(BaseModel):
                     "coordinates": [8.8940691, 7.1860402],
                 },
                 "address": "Zarmaganda Rayfield Road Jos",
-                "phone":"+23461046672",
+                "phone": "+23461046672",
                 "order_type": "Both",
-                "cover_picture":"https://cloudinary/images/home.jpg",
+                "cover_picture": "https://cloudinary/images/home.jpg",
                 "profile_picture": "https://cloudinary/images/home.jpg",
                 "operating_hours": [
                     {"day": "Monday", "open_time": "08:00", "close_time": "18:00"},
                     {"day": "Tuesday", "open_time": "08:00", "close_time": "18:00"},
-                    {"day": "Sunday", "open_time": None, "close_time": None} 
-                ]
+                    {"day": "Sunday", "open_time": None, "close_time": None},
+                ],
             }
         }
 
 
 class LoginSchema(BaseModel):
     email: EmailStr
-    password:str
+    password: str
 
     class Config:
         populate_by_name = True
@@ -100,6 +100,7 @@ class LoginSchema(BaseModel):
             }
         }
 
+
 class PasswordResetRequestSchema(BaseModel):
     email: EmailStr
 
@@ -107,15 +108,12 @@ class PasswordResetRequestSchema(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
-            "example": {
-                "email": "jd@gmail.com"
-    
-            }
-        }
+        json_schema_extra = {"example": {"email": "jd@gmail.com"}}
+
+
 class PasswordResetSchema(BaseModel):
     email: EmailStr
-    new_password:str
+    new_password: str
 
     class Config:
         populate_by_name = True
@@ -129,7 +127,6 @@ class PasswordResetSchema(BaseModel):
         }
 
 
-
 class ChangePasswordSchema(BaseModel):
     current_password: str
     new_password: str
@@ -140,17 +137,18 @@ class ChangePasswordSchema(BaseModel):
         json_encoders = {ObjectId: str}
         json_schema_extra = {
             "example": {
-                "current_password":"**************",
+                "current_password": "**************",
                 "new_password": "******************",
             }
         }
+
 
 class BankInformationSchema(BaseModel):
     bank_code: str
     bank_name: str
     account_name: str
-    account_number:str
-    
+    account_number: str
+
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
@@ -164,15 +162,16 @@ class BankInformationSchema(BaseModel):
             }
         }
 
+
 class MenuSchema(BaseModel):
     name: str
     description: str
     price: float
-    preparation_duration:str
-    menu_picture:str
-    category_id:str
-    packaging_id:str
-    
+    preparation_duration: str
+    menu_picture: str
+    category_id: str
+    packaging_id: str
+
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
@@ -183,7 +182,7 @@ class MenuSchema(BaseModel):
                 "description": "Good for your Body",
                 "price": 2000,
                 "preparation_duration": "25 minutes",
-                "menu_picture":"https://cloudinary/images/home.jpg",
+                "menu_picture": "https://cloudinary/images/home.jpg",
                 "category_id": "cat534372711",
                 "packaging_id": "tpack534372711",
             }
@@ -193,8 +192,7 @@ class MenuSchema(BaseModel):
 class CategorySchema(BaseModel):
     name: str
     description: str
-   
-    
+
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
@@ -211,8 +209,7 @@ class PackagingSchema(BaseModel):
     name: str
     description: str
     price: float
-  
-    
+
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
@@ -225,9 +222,11 @@ class PackagingSchema(BaseModel):
             }
         }
 
+
 class OTPVerification(BaseModel):
     email: EmailStr
     otp: str
+
     class Config:
         populate_by_name = True
         arbitrary_types_allowed = True
@@ -238,7 +237,6 @@ class OTPVerification(BaseModel):
                 "otp": "123421",
             }
         }
-
 
 
 class PackItemSchema(BaseModel):
@@ -274,8 +272,8 @@ class PackSchema(BaseModel):
                     {
                         "menu_id": "menu123456789",
                         "quantity": 1,
-                    }
-                ]
+                    },
+                ],
             }
         }
 
@@ -300,17 +298,15 @@ class OrderSchema(BaseModel):
                         "packaging_id": "pack534372711",
                         "items": [
                             {"menu_id": "menu534372711", "quantity": 2},
-                            {"menu_id": "menu123456789", "quantity": 1}
-                        ]
+                            {"menu_id": "menu123456789", "quantity": 1},
+                        ],
                     },
                     {
                         "packaging_id": "pack987654321",
-                        "items": [
-                            {"menu_id": "menu112233445", "quantity": 3}
-                        ]
-                    }
+                        "items": [{"menu_id": "menu112233445", "quantity": 3}],
+                    },
                 ],
-                "total_price": 7500.0
+                "total_price": 7500.0,
             }
         }
 

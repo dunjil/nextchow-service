@@ -3,16 +3,23 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.responses import JSONResponse
 from starlette.status import HTTP_404_NOT_FOUND, HTTP_405_METHOD_NOT_ALLOWED
-from app.vendors.menu.menu_routes import menus_router,categories_router,packaging_router
-from app.vendors.authentication.registration_router import vendor_auth_router
-from app.vendors.orders.orders_routes import order_router
-from app.vendors.authentication.change_password_router import vendor_password_router
 
-
-from app.customers.authentication.customer_change_password_router import customer_password_router
-from app.customers.authentication.customer_registration_router import customer_auth_router
+from app.customers.authentication.customer_change_password_router import (
+    customer_password_router,
+)
+from app.customers.authentication.customer_registration_router import (
+    customer_auth_router,
+)
 from app.customers.cart.customer_cart_router import cart_router
 from app.customers.orders.customer_orders_router import customer_order_router
+from app.vendors.authentication.change_password_router import vendor_password_router
+from app.vendors.authentication.registration_router import vendor_auth_router
+from app.vendors.menu.menu_routes import (
+    categories_router,
+    menus_router,
+    packaging_router,
+)
+from app.vendors.orders.orders_routes import order_router
 
 app = FastAPI()
 
@@ -67,6 +74,7 @@ async def custom_http_exception_handler(request, exc):
         },
     )
 
+
 # Vendor Routes
 app.include_router(vendor_auth_router, prefix="/api")
 app.include_router(vendor_password_router, prefix="/api")
@@ -81,7 +89,6 @@ app.include_router(customer_auth_router, prefix="/api")
 app.include_router(customer_password_router, prefix="/api")
 app.include_router(cart_router, prefix="/api")
 app.include_router(customer_order_router, prefix="/api")
-
 
 
 # Rider Routes

@@ -16,8 +16,9 @@ class NEXTCHOW_COLLECTIONS:
     VENDOR_PROFILE: str = "vendor_profile"
     ORDERS: str = "orders"
     VENDOR_OTP: str = "vendor_otp"
-    MENU_PACKAGING:str="menu_packaging"
-    MENU_CATEGORY:str="menu_category"
+    MENU_PACKAGING: str = "menu_packaging"
+    ORDER_PAYMENTS: str = "order_payments"
+    MENU_CATEGORY: str = "menu_category"
     CUSTOMER_USER: str = "customer_users"
     CUSTOMER_CART: str = "customer_cart"
 

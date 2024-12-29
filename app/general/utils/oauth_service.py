@@ -79,4 +79,3 @@ async def get_current_user(
         {"_id": current_user_id}
     )
     return current_user
- 

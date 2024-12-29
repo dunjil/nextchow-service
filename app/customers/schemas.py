@@ -1,8 +1,11 @@
 from datetime import datetime
-from typing import Optional,List
+from typing import List, Optional
+
 from bson import ObjectId
-from pydantic import BaseModel, Field,EmailStr
+from pydantic import BaseModel, EmailStr, Field
+
 from app.general.utils.helpers import PyObjectId
+
 
 class Location(BaseModel):
     type: str = "Point"
@@ -14,10 +17,10 @@ class SignUpSchema(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
-    phone:str
-    password:str
-    role:str
-    location:Location
+    phone: str
+    password: str
+    role: str
+    location: Location
     address: str
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: Optional[datetime] = None
@@ -32,8 +35,8 @@ class SignUpSchema(BaseModel):
                 "last_name": "Doe",
                 "email": "jd@gmail.com",
                 "password": "******************",
-                "phone":"+23470665543",
-                "role":"customer",
+                "phone": "+23470665543",
+                "role": "customer",
                 "location": {
                     "type": "Point",
                     "coordinates": [8.8940691, 7.1860402],
@@ -42,9 +45,10 @@ class SignUpSchema(BaseModel):
             }
         }
 
+
 class LoginSchema(BaseModel):
     email: EmailStr
-    password:str
+    password: str
 
     class Config:
         populate_by_name = True
@@ -68,12 +72,7 @@ class CartItemSchema(BaseModel):
     quantity: int
 
     class Config:
-        json_schema_extra = {
-            "example": {
-                "menu_id": "menu534372711",
-                "quantity": 2
-            }
-        }
+        json_schema_extra = {"example": {"menu_id": "menu534372711", "quantity": 2}}
 
 
 class CartPackSchema(BaseModel):
@@ -85,9 +84,9 @@ class CartPackSchema(BaseModel):
             "example": {
                 "items": [
                     {"menu_id": "menu534372711", "quantity": 2},
-                    {"menu_id": "menu987654321", "quantity": 1}
+                    {"menu_id": "menu987654321", "quantity": 1},
                 ],
-                "packaging_id": "pack534372711"
+                "packaging_id": "pack534372711",
             }
         }
 
@@ -107,18 +106,16 @@ class UserCartSchema(BaseModel):
                     {
                         "items": [
                             {"menu_id": "menu534372711", "quantity": 2},
-                            {"menu_id": "menu987654321", "quantity": 1}
+                            {"menu_id": "menu987654321", "quantity": 1},
                         ],
-                        "packaging_id": "pack534372711"
+                        "packaging_id": "pack534372711",
                     },
                     {
-                        "items": [
-                            {"menu_id": "menu112233445", "quantity": 1}
-                        ],
-                        "packaging_id": "pack987654321"
-                    }
+                        "items": [{"menu_id": "menu112233445", "quantity": 1}],
+                        "packaging_id": "pack987654321",
+                    },
                 ],
-                "total_price": 6400.0
+                "total_price": 6400.0,
             }
         }
 
@@ -130,15 +127,12 @@ class PasswordResetRequestSchema(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
-            "example": {
-                "email": "jd@gmail.com"
-    
-            }
-        }
+        json_schema_extra = {"example": {"email": "jd@gmail.com"}}
+
+
 class PasswordResetSchema(BaseModel):
     email: EmailStr
-    new_password:str
+    new_password: str
 
     class Config:
         populate_by_name = True
@@ -152,7 +146,6 @@ class PasswordResetSchema(BaseModel):
         }
 
 
-
 class ChangePasswordSchema(BaseModel):
     current_password: str
     new_password: str
@@ -163,10 +156,11 @@ class ChangePasswordSchema(BaseModel):
         json_encoders = {ObjectId: str}
         json_schema_extra = {
             "example": {
-                "current_password":"**************",
+                "current_password": "**************",
                 "new_password": "******************",
             }
         }
+
 
 class PackItemSchema(BaseModel):
     menu_id: str
@@ -201,11 +195,10 @@ class PackSchema(BaseModel):
                     {
                         "menu_id": "menu123456789",
                         "quantity": 1,
-                    }
-                ]
+                    },
+                ],
             }
         }
-
 
 
 class OrderSchema(BaseModel):
@@ -228,18 +221,28 @@ class OrderSchema(BaseModel):
                         "packaging_id": "pack534372711",
                         "items": [
                             {"menu_id": "menu534372711", "quantity": 2},
-                            {"menu_id": "menu123456789", "quantity": 1}
-                        ]
+                            {"menu_id": "menu123456789", "quantity": 1},
+                        ],
                     },
                     {
                         "packaging_id": "pack987654321",
-                        "items": [
-                            {"menu_id": "menu112233445", "quantity": 3}
-                        ]
-                    }
+                        "items": [{"menu_id": "menu112233445", "quantity": 3}],
+                    },
                 ],
-                "total_price": 7500.0
+                "total_price": 7500.0,
             }
+        }
+
+
+class OrderPaymentSchema(BaseModel):
+    order_id: str
+    total_price: float
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        json_schema_extra = {
+            "example": {"order_id": "0X11114hjrfk", "total_price": 7500.0}
         }
 
 
