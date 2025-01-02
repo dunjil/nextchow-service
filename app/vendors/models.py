@@ -57,6 +57,31 @@ class VendorBankInformation(BaseModel):
         }
 
 
+class BankAccount(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    account_number: str = Field(..., description="The bank account number")
+    user_id: str = Field(
+        ..., description="The ID of the user associated with the account"
+    )
+    bank_code: str = Field(..., description="The bank's code")
+    bank_name: str = Field(..., description="The name of the bank")
+    account_name: str = Field(..., description="The name on the bank account")
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "account_number": "0193274682",
+                "user_id": "1234567890",
+                "bank_code": "044",
+                "bank_name": "First Bank",
+                "account_name": "Sunshine Studios",
+            }
+        }
+
+
 class Menu(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     user_id: str

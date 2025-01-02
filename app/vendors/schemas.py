@@ -311,6 +311,42 @@ class OrderSchema(BaseModel):
         }
 
 
+class BankAccountSchema(BaseModel):
+    account_name: str = Field()
+    bank_code: str = Field()
+    bank_name: str = Field()
+    account_number: str = Field()
+
+    class Config:
+        allowed_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "account_name": "Sunshine Studios",
+                "bank_code": "044",
+                "bank_name": "First Bank",
+                "account_number": "0193274682",
+            }
+        }
+
+
+class ResolveBankAccountSchema(BaseModel):
+    bank_code: str = Field()
+    account_number: str = Field()
+
+    class Config:
+        allowed_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "bank_code": "044",
+                "account_number": "4034555669",
+            }
+        }
+
+
 from enum import Enum
 
 

@@ -5,6 +5,7 @@ from typing import List
 import requests
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
+from geopy.distance import geodesic
 from pymongo.errors import PyMongoError
 
 from app.customers.models import *
@@ -167,15 +168,46 @@ async def checkout_and_initiate_payment(
         if not cart or not cart["packs"]:
             raise HTTPException(status_code=400, detail="Cart is empty")
 
+        # Get menu and vendor details
+        menu_id = cart["packs"][0]["items"][0].get(
+            "menu_id"
+        )  # Adjusted based on cart structure
+        menu = await db[NEXTCHOW_COLLECTIONS.MENU].find_one({"_id": menu_id})
+        if not menu:
+            raise HTTPException(status_code=400, detail="Menu item not found")
+
+        vendor = await db[NEXTCHOW_COLLECTIONS.VENDOR_USER].find_one(
+            {"_id": menu.get("user_id")}
+        )
+        if not vendor or "location" not in vendor:
+            raise HTTPException(
+                status_code=400, detail="Vendor not found or location missing"
+            )
+
+        vendor_location = vendor.get("location")
+        vendor_address = vendor.get("address", "Unknown")
+
+        user_location = user.get("location")
+        if not user_location:
+            raise HTTPException(status_code=400, detail="User location is missing")
+
+        # Calculate the estimated distance
+        estimated_distance = geodesic(
+            (vendor_location["coordinates"][1], vendor_location["coordinates"][0]),
+            (user_location["coordinates"][1], user_location["coordinates"][0]),
+        ).kilometers
+
         # Calculate total price
         total_price = await calculate_cart_total(cart["packs"], db)
 
         # Create an order
         order = {
             "user_id": str(user["_id"]),
-            "customer_name": f"{user.get('first_name', '')} {user.get('last_name', '')}",
-            "customer_phone": user.get("phone", ""),
-            "customer_address": user.get("address", ""),
+            "pickup_address": vendor_address,
+            "pickup_location": vendor_location,
+            "delivery_address": user.get("address", ""),
+            "delivery_location": user_location,
+            "estimated_distance": round(estimated_distance, 2),
             "additional_info": user.get("additional_info", ""),
             "packs": cart["packs"],
             "total_price": total_price,
@@ -327,6 +359,9 @@ async def calculate_cart_total(packs: List[CartPackSchema], db) -> float:
             },
         )
 
+
+# TODO: Confirm order payment
+# TODO: Assign Order to Riders
 
 # @cart_router.post("/initiate_payment")
 # async def initiate_payment(

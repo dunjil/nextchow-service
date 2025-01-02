@@ -235,3 +235,37 @@ async def vendor_login(login_data: LoginSchema, db=Depends(get_database)):
             status_code=500,
             detail={"success": False, "message": f"Unexpected error: {str(e)}"},
         )
+
+@vendor_auth_router.get("/profile")
+async def get_vendor_profile(
+    user: dict = Depends(get_current_user),
+    db=Depends(get_database),
+):
+    try:
+        # Fetch the vendor's profile from the database
+        vendor_profile = await db[NEXTCHOW_COLLECTIONS.VENDOR_USER].find_one(
+            {"_id": user.get("_id")}
+        )
+
+        if not vendor_profile:
+            raise HTTPException(
+                status_code=404,
+                detail={"success": False, "message": "Vendor profile not found"},
+            )
+
+        # Return the profile data
+        return {
+            "success": True,
+            "data": VendorProfile(**vendor_profile).dict(by_alias=True),
+        }
+
+    except PyMongoError as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"success": False, "message": f"Database error: {str(e)}"},
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
+        )
