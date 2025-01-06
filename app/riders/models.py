@@ -22,7 +22,7 @@ class RiderProfile(BaseModel):
     updated_at: Optional[datetime] = None
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 

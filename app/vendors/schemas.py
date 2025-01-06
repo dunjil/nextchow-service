@@ -4,8 +4,6 @@ from typing import List, Optional
 from bson import ObjectId
 from pydantic import BaseModel, EmailStr, Field
 
-from app.general.utils.helpers import PyObjectId
-
 
 class Location(BaseModel):
     type: str = "Point"
@@ -24,12 +22,11 @@ class OperatingHours(BaseModel):
 
 
 class SignUpSchema(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     first_name: str
     last_name: str
     email: EmailStr
     password: str
-    role: str=Field(default='vendor')
+    role: str = Field(default="vendor")
     is_verified: bool = Field(default=False)
     is_onboarded: bool = Field(default=False)
     is_approved: bool = Field(default=False)
@@ -37,10 +34,10 @@ class SignUpSchema(BaseModel):
     updated_at: Optional[datetime] = None
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "first_name": "John",
                 "last_name": "Doe",
@@ -63,22 +60,19 @@ class BusinessProfileSchema(BaseModel):
     operating_hours: List[OperatingHours] = Field(default_factory=list)
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "store_name": "Jenny's kitchen",
                 "description": "Stomach happiness",
-                "location": {
-                    "type": "Point",
-                    "coordinates": [8.8940691, 7.1860402],
-                },
+                "location": {"type": "Point", "coordinates": [9.8182772, 8.8914264]},
                 "address": "Zarmaganda Rayfield Road Jos",
-                "phone": "+23461046672",
+                "phone": "+2347061046672",
                 "order_type": "Both",
-                "cover_picture": "https://cloudinary/images/home.jpg",
-                "profile_picture": "https://cloudinary/images/home.jpg",
+                "cover_picture": "https://res.cloudinary.com/dnp0rvouv/image/upload/v1672858749/cld-sample-4.jpg",
+                "profile_picture": "https://res.cloudinary.com/dnp0rvouv/image/upload/v1731960217/profile/dbjipwfdrksbfgcjuofu.jpg",
                 "operating_hours": [
                     {"day": "Monday", "open_time": "08:00", "close_time": "18:00"},
                     {"day": "Tuesday", "open_time": "08:00", "close_time": "18:00"},
@@ -93,10 +87,10 @@ class LoginSchema(BaseModel):
     password: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "email": "jd@gmail.com",
                 "password": "******************",
@@ -108,10 +102,10 @@ class PasswordResetRequestSchema(BaseModel):
     email: EmailStr
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {"example": {"email": "jd@gmail.com"}}
+        schema_extra = {"example": {"email": "jd@gmail.com"}}
 
 
 class PasswordResetSchema(BaseModel):
@@ -119,10 +113,10 @@ class PasswordResetSchema(BaseModel):
     new_password: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "email": "jd@gmail.com",
                 "new_password": "******************",
@@ -135,10 +129,10 @@ class ChangePasswordSchema(BaseModel):
     new_password: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "current_password": "**************",
                 "new_password": "******************",
@@ -153,10 +147,10 @@ class BankInformationSchema(BaseModel):
     account_number: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "bank_code": "033",
                 "bank_name": "Opay Digital Services",
@@ -176,16 +170,16 @@ class MenuSchema(BaseModel):
     packaging_id: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Rice and Beans",
                 "description": "Good for your Body",
                 "price": 2000,
                 "preparation_duration": "25 minutes",
-                "menu_picture": "https://cloudinary/images/home.jpg",
+                "menu_picture": "https://res.cloudinary.com/dnp0rvouv/image/upload/v1731960217/profile/dbjipwfdrksbfgcjuofu.jpg",
                 "category_id": "cat534372711",
                 "packaging_id": "tpack534372711",
             }
@@ -197,10 +191,10 @@ class CategorySchema(BaseModel):
     description: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Breakfast",
                 "description": "Good for your Body",
@@ -214,10 +208,10 @@ class PackagingSchema(BaseModel):
     price: float
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Leather Bag",
                 "description": "Good and esy to carry, reusable",
@@ -231,10 +225,10 @@ class OTPVerification(BaseModel):
     otp: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "email": "johnd@gmail.com",
                 "otp": "123421",
@@ -249,7 +243,7 @@ class PackItemSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "menu_id": "menu534372711",
                 "quantity": 2,
@@ -264,7 +258,7 @@ class PackSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "packaging_id": "pack534372711",
                 "items": [
@@ -291,7 +285,7 @@ class OrderSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "customer_name": "Jane Doe",
                 "customer_phone": "+123456789",

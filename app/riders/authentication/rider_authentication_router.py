@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from pymongo.errors import PyMongoError
 
 from app.customers.schemas import LoginSchema, OTPVerification, SignUpSchema
@@ -40,9 +41,10 @@ async def rider_signup(signup_data: SignUpSchema, db=Depends(get_database)):
         otp = "123456"  # For testing, replace with actual OTP generation
         user_data["otp"] = get_password_hash(otp)
         user_data["otp_created_at"] = datetime.now()
+        data = jsonable_encoder(user_data)
 
         # Insert user with OTP
-        result = await db[NEXTCHOW_COLLECTIONS.RIDER_USER].insert_one(user_data)
+        result = await db[NEXTCHOW_COLLECTIONS.RIDER_USER].insert_one(data)
 
         # Send OTP via email (commented out for testing)
         # await send_reg_otp_mail(signup_data.email, otp)
@@ -66,9 +68,7 @@ async def rider_signup(signup_data: SignUpSchema, db=Depends(get_database)):
 
 
 @rider_auth_router.post("/verify-otp")
-async def verify_rider_otp(
-    otp_verification: OTPVerification, db=Depends(get_database)
-):
+async def verify_rider_otp(otp_verification: OTPVerification, db=Depends(get_database)):
     try:
         # Find user by email
         user = await db[NEXTCHOW_COLLECTIONS.RIDER_USER].find_one(
@@ -223,6 +223,7 @@ async def update_rider_profile(
             status_code=500,
             detail={"success": False, "message": f"Unexpected error: {str(e)}"},
         )
+
 
 @rider_auth_router.get("/profile")
 async def get_rider_profile(

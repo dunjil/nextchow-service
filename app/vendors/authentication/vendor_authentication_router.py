@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from pymongo.errors import PyMongoError
 
 from app.general.utils.database import NEXTCHOW_COLLECTIONS, get_database
@@ -12,7 +13,9 @@ from app.general.utils.oauth_service import (
     verify_password,
 )
 from app.vendors.models import *
+from app.vendors.models import SignUpModel
 from app.vendors.schemas import *
+from app.vendors.schemas import LoginSchema, OTPVerification, SignUpSchema
 
 vendor_auth_router = APIRouter(prefix="/vendor", tags=["Vendor Authentication"])
 
@@ -34,14 +37,20 @@ async def vendor_signup(signup_data: SignUpSchema, db=Depends(get_database)):
         hashed_password = get_password_hash(signup_data.password)
 
         # Prepare user data
-        user_data = signup_data.dict()
-        user_data["password"] = hashed_password
+        user_data = jsonable_encoder(SignUpModel(**signup_data.dict()))
 
         # Generate OTP
         # otp = generate_otp()
-        otp = "123456"
-        user_data["otp"] = get_password_hash(otp)
-        user_data["otp_created_at"] = datetime.now()
+        user_data.update(
+            {
+                "password": hashed_password,
+                "otp": get_password_hash(
+                    "123456"
+                ),  # Replace with `generate_otp()` if needed
+                "otp_created_at": datetime.now(),
+            }
+        )
+        # data=jsonable_encoder(jsonable_encoder)
 
         # Insert user with OTP
         result = await db[NEXTCHOW_COLLECTIONS.VENDOR_USER].insert_one(user_data)
@@ -109,7 +118,7 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
         )
 
         # Create access token
-        access_token = create_access_token({"sub": str(user["_id"])})
+        access_token = create_access_token({"id": str(user["_id"])})
 
         return {
             "success": True,
@@ -149,7 +158,7 @@ async def complete_vendor_profile(
             )
 
         # Prepare business profile data
-        business_data = business_profile.dict()
+        business_data = jsonable_encoder(business_profile)
 
         # Update user profile
         result = await db[NEXTCHOW_COLLECTIONS.VENDOR_USER].update_one(
@@ -192,41 +201,30 @@ async def vendor_login(login_data: LoginSchema, db=Depends(get_database)):
         )
 
         if not user:
-            raise HTTPException(
+            return HTTPException(
                 status_code=401,
                 detail={"success": False, "message": "Invalid credentials"},
             )
 
         # Verify password
         if not verify_password(login_data.password, user["password"]):
-            raise HTTPException(
+            return HTTPException(
                 status_code=401,
                 detail={"success": False, "message": "Invalid credentials"},
             )
 
-        # Check if profile is completed
-        if not user.get("profile_completed"):
-            raise HTTPException(
-                status_code=403,
-                detail={
-                    "success": False,
-                    "message": "Profile not completed. Please complete your profile.",
-                    "require_profile_completion": True,
-                },
-            )
-
         # Create access token
-        access_token = create_access_token({"sub": str(user["_id"])})
+        access_token = create_access_token({"id": user["_id"]})
 
         return {
             "success": True,
             "message": "Login successful",
             "access_token": access_token,
-            "token_type": "bearer",
+            "data": {key: value for key, value in user.items() if key != "password"},
         }
 
     except PyMongoError as e:
-        raise HTTPException(
+        return HTTPException(
             status_code=500,
             detail={"success": False, "message": f"Database error: {str(e)}"},
         )
@@ -235,6 +233,7 @@ async def vendor_login(login_data: LoginSchema, db=Depends(get_database)):
             status_code=500,
             detail={"success": False, "message": f"Unexpected error: {str(e)}"},
         )
+
 
 @vendor_auth_router.get("/profile")
 async def get_vendor_profile(
@@ -256,6 +255,7 @@ async def get_vendor_profile(
         # Return the profile data
         return {
             "success": True,
+            "message": "Profile retrieved successfully",
             "data": VendorProfile(**vendor_profile).dict(by_alias=True),
         }
 

@@ -22,7 +22,7 @@ async def add_ride(
         menu_data = jsonable_encoder(menu_data)
         new_menu = Menu(**menu_data, user_id=user.get("_id"))
         new_menu = jsonable_encoder(new_menu)
-        result = await db[NEXTCHOW_COLLECTIONS.VENDOR_MENU].insert_one(new_menu)
+        result = await db[NEXTCHOW_COLLECTIONS.MENU].insert_one(new_menu)
         if result.inserted_id:
             return {"success": True, "message": "Menu successfully added"}
         return HTTPException(
@@ -42,18 +42,18 @@ async def add_ride(
 
 
 # Fetch all menus for a vendor
-@menus_router.get("/menus", response_model=List[Menu])
+@menus_router.get("/menus")
 async def fetch_menus(
     user: dict = Depends(get_current_user),
     db=Depends(get_database),
 ):
     try:
         menus = (
-            await db[NEXTCHOW_COLLECTIONS.VENDOR_MENU]
+            await db[NEXTCHOW_COLLECTIONS.MENU]
             .find({"user_id": user.get("_id")})
             .to_list(length=100)
         )
-        return menus
+        return {"success": True, "data": menus}
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
@@ -100,7 +100,7 @@ async def delete_menu(
     db=Depends(get_database),
 ):
     try:
-        result = await db[NEXTCHOW_COLLECTIONS.VENDOR_MENU].delete_one(
+        result = await db[NEXTCHOW_COLLECTIONS.MENU].delete_one(
             {"_id": ObjectId(menu_id), "user_id": user.get("_id")}
         )
         if result.deleted_count:
@@ -136,7 +136,7 @@ async def add_category(
         category_data = jsonable_encoder(category_data)
         new_category = Category(**category_data, user_id=user.get("_id"))
         new_category = jsonable_encoder(new_category)
-        result = await db["categories"].insert_one(new_category)
+        result = await db[NEXTCHOW_COLLECTIONS.MENU_CATEGORY].insert_one(new_category)
         if result.inserted_id:
             return {"success": True, "message": "Category successfully added"}
         raise HTTPException(
@@ -151,18 +151,18 @@ async def add_category(
 
 
 # Fetch all categories for a vendor
-@categories_router.get("/categories", response_model=List[Category])
+@categories_router.get("/categories")
 async def fetch_categories(
     user: dict = Depends(get_current_user),
     db=Depends(get_database),
 ):
     try:
         categories = (
-            await db["categories"]
+            await db[NEXTCHOW_COLLECTIONS.MENU_CATEGORY]
             .find({"user_id": user.get("_id")})
             .to_list(length=100)
         )
-        return categories
+        return {"success": True, "data": categories}
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
@@ -180,7 +180,7 @@ async def update_category(
 ):
     try:
         category_data = jsonable_encoder(category_data)
-        result = await db["categories"].update_one(
+        result = await db[NEXTCHOW_COLLECTIONS.MENU_CATEGORY].update_one(
             {"_id": ObjectId(category_id), "user_id": user.get("_id")},
             {"$set": category_data},
         )
@@ -208,7 +208,7 @@ async def delete_category(
     db=Depends(get_database),
 ):
     try:
-        result = await db["categories"].delete_one(
+        result = await db[NEXTCHOW_COLLECTIONS.MENU_CATEGORY].delete_one(
             {"_id": ObjectId(category_id), "user_id": user.get("_id")}
         )
         if result.deleted_count:
@@ -235,7 +235,7 @@ async def add_packaging(
         packaging_data = jsonable_encoder(packaging_data)
         new_packaging = Packaging(**packaging_data, user_id=user.get("_id"))
         new_packaging = jsonable_encoder(new_packaging)
-        result = await db["packaging"].insert_one(new_packaging)
+        result = await db[NEXTCHOW_COLLECTIONS.MENU_PACKAGING].insert_one(new_packaging)
         if result.inserted_id:
             return {"success": True, "message": "Packaging successfully added"}
         raise HTTPException(
@@ -250,16 +250,18 @@ async def add_packaging(
 
 
 # Fetch all packaging for a vendor
-@packaging_router.get("/packaging", response_model=List[Packaging])
+@packaging_router.get("/packaging")
 async def fetch_packaging(
     user: dict = Depends(get_current_user),
     db=Depends(get_database),
 ):
     try:
         packaging = (
-            await db["packaging"].find({"user_id": user.get("_id")}).to_list(length=100)
+            await db[NEXTCHOW_COLLECTIONS.MENU_PACKAGING]
+            .find({"user_id": user.get("_id")})
+            .to_list(length=100)
         )
-        return packaging
+        return {"success": True, "data": packaging}
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
@@ -277,12 +279,20 @@ async def update_packaging(
 ):
     try:
         packaging_data = jsonable_encoder(packaging_data)
-        result = await db["packaging"].update_one(
+        result = await db[NEXTCHOW_COLLECTIONS.MENU_PACKAGING].update_one(
             {"_id": ObjectId(packaging_id), "user_id": user.get("_id")},
             {"$set": packaging_data},
         )
         if result.modified_count:
-            return {"success": True, "message": "Packaging successfully updated"}
+            packaging = await db[NEXTCHOW_COLLECTIONS.MENU_PACKAGING].find_one(
+                {"user_id": user.get("_id")}
+            )
+
+            return {
+                "success": True,
+                "message": "Packaging successfully updated",
+                "data": packaging,
+            }
         raise HTTPException(
             status_code=404,
             detail={
@@ -305,7 +315,7 @@ async def delete_packaging(
     db=Depends(get_database),
 ):
     try:
-        result = await db["packaging"].delete_one(
+        result = await db[NEXTCHOW_COLLECTIONS.MENU_PACKAGING].delete_one(
             {"_id": ObjectId(packaging_id), "user_id": user.get("_id")}
         )
         if result.deleted_count:

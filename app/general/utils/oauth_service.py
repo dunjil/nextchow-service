@@ -75,7 +75,7 @@ async def get_current_user(
 
     current_user_id = verify_access_token(token, credentail_exception).id
 
-    current_user = await db[NEXTCHOW_COLLECTIONS.USERS].find_one(
+    current_user = await db[NEXTCHOW_COLLECTIONS.VENDOR_USER].find_one(
         {"_id": current_user_id}
     )
     return current_user

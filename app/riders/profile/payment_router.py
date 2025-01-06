@@ -1,29 +1,24 @@
-from datetime import datetime
-from dotenv import load_dotenv
 import os
-from fastapi import APIRouter, Depends, HTTPException,status
-from pymongo.errors import PyMongoError
+from datetime import datetime
+
 import requests
+from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, HTTPException, status
+from pymongo.errors import PyMongoError
+
 from app.general.utils.database import NEXTCHOW_COLLECTIONS, get_database
-from app.general.utils.mail_sender import send_password_reset_otp
-from app.general.utils.oauth_service import (
-    get_current_user,
-)
-from app.riders.schemas import (
-    BankAccountSchema,ResolveBankAccountSchema
-)
-from app.riders.models import (
-    BankAccount,
-)
-vendor_payment_router = APIRouter(
-    prefix="/rider", tags=["Rider Payment Management"]
-)
+from app.general.utils.oauth_service import get_current_user
+from app.riders.schemas import BankAccountSchema, ResolveBankAccountSchema
+
+vendor_payment_router = APIRouter(prefix="/rider", tags=["Rider Payment Management"])
 load_dotenv()
+
+
 @vendor_payment_router.post("/bank-account")
 async def add_bank_account(
     bank_data: BankAccountSchema,
     user: dict = Depends(get_current_user),
-    db=Depends(get_database)
+    db=Depends(get_database),
 ):
     try:
         # Check if bank account already exists for the user
@@ -65,7 +60,7 @@ async def add_bank_account(
 async def update_bank_account(
     bank_data: BankAccountSchema,
     user: dict = Depends(get_current_user),
-    db=Depends(get_database)
+    db=Depends(get_database),
 ):
     try:
         # Check if the bank account exists
@@ -108,8 +103,7 @@ async def update_bank_account(
 
 @vendor_payment_router.get("/bank-account")
 async def get_bank_account_details(
-    user: dict = Depends(get_current_user),
-    db=Depends(get_database)
+    user: dict = Depends(get_current_user), db=Depends(get_database)
 ):
     try:
         # Fetch bank account details for the user
@@ -144,7 +138,6 @@ async def get_bank_account_details(
             status_code=500,
             detail={"success": False, "message": f"Unexpected error: {str(e)}"},
         )
-
 
 
 @vendor_payment_router.get("/get_all_nigerian_banks")

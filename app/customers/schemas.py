@@ -26,10 +26,10 @@ class SignUpSchema(BaseModel):
     updated_at: Optional[datetime] = None
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "first_name": "John",
                 "last_name": "Doe",
@@ -51,10 +51,10 @@ class LoginSchema(BaseModel):
     password: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "email": "jd@gmail.com",
                 "password": "******************",
@@ -72,7 +72,7 @@ class CartItemSchema(BaseModel):
     quantity: int
 
     class Config:
-        json_schema_extra = {"example": {"menu_id": "menu534372711", "quantity": 2}}
+        schema_extra = {"example": {"menu_id": "menu534372711", "quantity": 2}}
 
 
 class CartPackSchema(BaseModel):
@@ -80,7 +80,7 @@ class CartPackSchema(BaseModel):
     packaging_id: Optional[str]  # Packaging is optional for a pack
 
     class Config:
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "items": [
                     {"menu_id": "menu534372711", "quantity": 2},
@@ -99,7 +99,7 @@ class UserCartSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "user_id": "user12345",
                 "packs": [
@@ -124,10 +124,10 @@ class PasswordResetRequestSchema(BaseModel):
     email: EmailStr
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {"example": {"email": "jd@gmail.com"}}
+        schema_extra = {"example": {"email": "jd@gmail.com"}}
 
 
 class PasswordResetSchema(BaseModel):
@@ -135,10 +135,10 @@ class PasswordResetSchema(BaseModel):
     new_password: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "email": "jd@gmail.com",
                 "new_password": "******************",
@@ -151,10 +151,10 @@ class ChangePasswordSchema(BaseModel):
     new_password: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "current_password": "**************",
                 "new_password": "******************",
@@ -169,7 +169,7 @@ class PackItemSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "menu_id": "menu534372711",
                 "quantity": 2,
@@ -184,7 +184,7 @@ class PackSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "packaging_id": "pack534372711",
                 "items": [
@@ -211,7 +211,7 @@ class OrderSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "customer_name": "Jane Doe",
                 "customer_phone": "+123456789",
@@ -241,9 +241,7 @@ class OrderPaymentSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
-            "example": {"order_id": "0X11114hjrfk", "total_price": 7500.0}
-        }
+        schema_extra = {"example": {"order_id": "0X11114hjrfk", "total_price": 7500.0}}
 
 
 from enum import Enum

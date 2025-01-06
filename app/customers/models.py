@@ -30,7 +30,7 @@ class VendorProfile(BaseModel):
     updated_at: Optional[datetime] = None
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
@@ -44,10 +44,10 @@ class VendorBankInformation(BaseModel):
     account_number: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "bank_code": "033",
                 "bank_name": "Opay Digital Services",
@@ -69,10 +69,10 @@ class Menu(BaseModel):
     packaging_id: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Rice and Beans",
                 "description": "Good for your Body",
@@ -98,10 +98,10 @@ class OrderPayment(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "order_id": "order534372711",
                 "user_id": "user123456",
@@ -122,10 +122,10 @@ class Category(BaseModel):
     description: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Breakfast",
                 "user_id": "23455324r42222",
@@ -141,10 +141,10 @@ class Packaging(BaseModel):
     price: float
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Rice and Beans",
                 "description": "Good for your Body",

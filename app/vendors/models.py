@@ -8,6 +8,34 @@ from app.general.utils.helpers import PyObjectId
 from app.vendors.schemas import Location, OperatingHours
 
 
+class SignUpModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    first_name: str
+    last_name: str
+    email: EmailStr
+    password: str
+    role: str = Field(default="vendor")
+    is_verified: bool = Field(default=False)
+    is_onboarded: bool = Field(default=False)
+    is_approved: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        allowed_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "jd@gmail.com",
+                "password": "******************",
+                "role": "vendor",
+            }
+        }
+
+
 class VendorProfile(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     first_name: str
@@ -30,7 +58,7 @@ class VendorProfile(BaseModel):
     updated_at: Optional[datetime] = None
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
@@ -44,10 +72,10 @@ class VendorBankInformation(BaseModel):
     account_number: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "bank_code": "033",
                 "bank_name": "Opay Digital Services",
@@ -90,14 +118,15 @@ class Menu(BaseModel):
     price: float
     preparation_duration: str
     menu_picture: str
+    is_available: bool = Field(default=False)
     category_id: str
     packaging_id: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Rice and Beans",
                 "description": "Good for your Body",
@@ -118,10 +147,10 @@ class Category(BaseModel):
     description: str
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Breakfast",
                 "user_id": "23455324r42222",
@@ -134,13 +163,14 @@ class Packaging(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     description: str
+    user_id: str
     price: float
 
     class Config:
-        populate_by_name = True
+        allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "name": "Rice and Beans",
                 "description": "Good for your Body",
