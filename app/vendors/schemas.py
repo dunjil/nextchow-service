@@ -29,7 +29,10 @@ class SignUpSchema(BaseModel):
     last_name: str
     email: EmailStr
     password: str
-    role: str
+    role: str=Field(default='vendor')
+    is_verified: bool = Field(default=False)
+    is_onboarded: bool = Field(default=False)
+    is_approved: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: Optional[datetime] = None
 
@@ -43,7 +46,7 @@ class SignUpSchema(BaseModel):
                 "last_name": "Doe",
                 "email": "jd@gmail.com",
                 "password": "******************",
-                "role": "merchant",
+                "role": "vendor",
             }
         }
 
