@@ -94,21 +94,21 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
         otp_created_at = user.get("otp_created_at")
 
         if not otp_hash or not otp_created_at:
-            raise HTTPException(
+            return HTTPException(
                 status_code=400,
-                detail={"success": False, "message": "No OTP exists for this user"},
+                detail="No OTP exists for this user",
             )
 
         # Check OTP expiration (e.g., 15 minutes)
         if (datetime.now() - otp_created_at).total_seconds() > 900:
             raise HTTPException(
-                status_code=400, detail={"success": False, "message": "OTP has expired"}
+                status_code=400, detail= "OTP has expired"
             )
 
         # Verify OTP
         if not verify_password(otp_verification.otp, otp_hash):
             raise HTTPException(
-                status_code=400, detail={"success": False, "message": "Invalid OTP"}
+                status_code=400, detail= "Invalid OTP"
             )
 
         # Mark user as verified
@@ -130,7 +130,7 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
         raise HTTPException(
