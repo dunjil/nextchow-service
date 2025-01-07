@@ -86,7 +86,7 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
 
         if not user:
             raise HTTPException(
-                status_code=404, detail={"success": False, "message": "User not found"}
+                status_code=404, detail="User not found"
             )
 
         # Check if OTP is valid and not expired
@@ -133,10 +133,7 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
             detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"{str(e)}",
-        )
+        raise e
 
 
 @vendor_auth_router.post("/complete-profile")
