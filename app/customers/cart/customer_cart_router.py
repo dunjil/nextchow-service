@@ -92,7 +92,7 @@ async def add_pack_to_cart(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail= f"Database error: {str(e)}",
         )
 
 
@@ -114,7 +114,7 @@ async def get_user_cart(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail= f"Database error: {str(e)}",
         )
 
 
@@ -148,7 +148,7 @@ async def remove_pack_from_cart(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail= f"Database error: {str(e)}",
         )
 
 
@@ -268,19 +268,16 @@ async def checkout_and_initiate_payment(
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={"success": False, "message": "Failed to initialize payment"},
+                detail= "Failed to initialize payment",
             )
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 # @cart_router.post("/cart/checkout")
 # async def checkout(user: dict = Depends(get_current_user), db=Depends(get_database)):
@@ -321,7 +318,7 @@ async def checkout_and_initiate_payment(
 #     except PyMongoError as e:
 #         raise HTTPException(
 #             status_code=500,
-#             detail={"success": False, "message": f"Database error: {str(e)}"},
+#             detail= f"Database error: {str(e)}"},
 #         )
 
 
@@ -414,5 +411,5 @@ async def calculate_cart_total(packs: List[CartPackSchema], db) -> float:
 #     else:
 #         raise HTTPException(
 #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#             detail={"success": False, "message": "Failed to initialize payment"},
+#             detail= "Failed to initialize payment"},
 #         )

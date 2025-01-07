@@ -44,17 +44,14 @@ async def add_bank_account(
 
         return {"success": True, "message": "Bank account added successfully"}
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @vendor_payment_router.put("/bank-account")
 async def update_bank_account(
@@ -89,17 +86,14 @@ async def update_bank_account(
 
         return {"success": True, "message": "Bank account updated successfully"}
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @vendor_payment_router.get("/bank-account")
 async def get_bank_account_details(
@@ -128,17 +122,14 @@ async def get_bank_account_details(
             },
         }
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @vendor_payment_router.get("/get_all_nigerian_banks")
 async def get_all_nigerian_banks(

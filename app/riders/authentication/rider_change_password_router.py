@@ -61,17 +61,14 @@ async def request_password_reset(
 
         return {"success": True, "message": "Password reset OTP sent to your email"}
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @rider_password_router.post("/verify-password-reset-otp")
 async def verify_password_reset_otp(
@@ -85,7 +82,7 @@ async def verify_password_reset_otp(
 
         if not user:
             raise HTTPException(
-                status_code=404, detail={"success": False, "message": "User not found"}
+                status_code=404, detail= "User not found"}
             )
 
         # Check if OTP exists and is not expired
@@ -95,7 +92,7 @@ async def verify_password_reset_otp(
         if not otp_hash or not otp_created_at:
             raise HTTPException(
                 status_code=400,
-                detail={"success": False, "message": "No password reset OTP exists"},
+                detail= "No password reset OTP exists"},
             )
 
         # Check OTP expiration (e.g., 15 minutes)
@@ -110,13 +107,13 @@ async def verify_password_reset_otp(
                 },
             )
             raise HTTPException(
-                status_code=400, detail={"success": False, "message": "OTP has expired"}
+                status_code=400, detail= "OTP has expired"}
             )
 
         # Verify OTP
         if not verify_password(otp_verification.otp, otp_hash):
             raise HTTPException(
-                status_code=400, detail={"success": False, "message": "Invalid OTP"}
+                status_code=400, detail= "Invalid OTP"}
             )
 
         # Mark OTP as verified
@@ -130,17 +127,14 @@ async def verify_password_reset_otp(
             "message": "OTP verified successfully. You can now reset your password",
         }
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @rider_password_router.post("/reset-password")
 async def reset_password(password_reset: PasswordResetSchema, db=Depends(get_database)):
@@ -152,14 +146,14 @@ async def reset_password(password_reset: PasswordResetSchema, db=Depends(get_dat
 
         if not user:
             raise HTTPException(
-                status_code=404, detail={"success": False, "message": "User not found"}
+                status_code=404, detail= "User not found"}
             )
 
         # Check if OTP was verified
         if not user.get("password_reset_otp_verified"):
             raise HTTPException(
                 status_code=403,
-                detail={"success": False, "message": "OTP not verified"},
+                detail= "OTP not verified"},
             )
 
         # Check if new password is different from current password
@@ -191,22 +185,19 @@ async def reset_password(password_reset: PasswordResetSchema, db=Depends(get_dat
         if result.modified_count == 0:
             raise HTTPException(
                 status_code=500,
-                detail={"success": False, "message": "Password could not be updated"},
+                detail= "Password could not be updated"},
             )
 
         return {"success": True, "message": "Password reset successfully"}
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 # Optional: Change password when logged in
 @rider_password_router.post("/change-password")
@@ -227,7 +218,7 @@ async def change_password(
         ):
             raise HTTPException(
                 status_code=400,
-                detail={"success": False, "message": "Current password is incorrect"},
+                detail= "Current password is incorrect"},
             )
 
         # Check if new password is different from current password
@@ -252,18 +243,16 @@ async def change_password(
         if result.modified_count == 0:
             raise HTTPException(
                 status_code=500,
-                detail={"success": False, "message": "Password could not be updated"},
+                detail= "Password could not be updated"},
             )
 
         return {"success": True, "message": "Password changed successfully"}
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
+        raise e

@@ -21,20 +21,16 @@ async def create_order(order_data: OrderSchema, db=Depends(get_database)):
             if not packaging:
                 raise HTTPException(
                     status_code=400,
-                    detail={
-                        "success": False,
-                        "message": f"Packaging {pack.packaging_id} not found",
-                    },
+                    detail=f"Packaging {pack.packaging_id} not found"
+                
                 )
             for item in pack.items:
                 menu = await db["menu"].find_one({"_id": ObjectId(item.menu_id)})
                 if not menu:
                     raise HTTPException(
                         status_code=400,
-                        detail={
-                            "success": False,
-                            "message": f"Menu item {item.menu_id} not found",
-                        },
+                        detail= f"Menu item {item.menu_id} not found",
+                        
                     )
 
         # Insert the order
@@ -46,7 +42,7 @@ async def create_order(order_data: OrderSchema, db=Depends(get_database)):
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail= f"Database error: {str(e)}",
         )
 
 
@@ -70,7 +66,7 @@ async def fetch_orders(db=Depends(get_database)):
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail= f"Database error: {str(e)}",
         )
 
 
@@ -85,20 +81,16 @@ async def update_order(
             if not packaging:
                 raise HTTPException(
                     status_code=400,
-                    detail={
-                        "success": False,
-                        "message": f"Packaging {pack.packaging_id} not found",
-                    },
+                    detail=f"Packaging {pack.packaging_id} not found"
                 )
             for item in pack.items:
                 menu = await db["menu"].find_one({"_id": item.menu_id})
                 if not menu:
                     raise HTTPException(
                         status_code=400,
-                        detail={
-                            "success": False,
-                            "message": f"Menu item {item.menu_id} not found",
-                        },
+                        detail=
+                            f"Menu item {item.menu_id} not found",
+              
                     )
 
         # Update the order
@@ -111,12 +103,12 @@ async def update_order(
             return {"success": True, "message": "Order updated successfully"}
         raise HTTPException(
             status_code=404,
-            detail={"success": False, "message": "Order not found or no changes made"},
+            detail= "Order not found or no changes made",
         )
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail= f"Database error: {str(e)}",
         )
 
 
@@ -127,12 +119,12 @@ async def delete_order(order_id: str, db=Depends(get_database)):
         if result.deleted_count:
             return {"success": True, "message": "Order deleted successfully"}
         raise HTTPException(
-            status_code=404, detail={"success": False, "message": "Order not found"}
+            status_code=404, detail= "Order not found"
         )
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}"
         )
 
 
@@ -154,12 +146,12 @@ async def update_order_status(
 
         raise HTTPException(
             status_code=404,
-            detail={"success": False, "message": "Order not found or status unchanged"},
+            detail= "Order not found or status unchanged",
         )
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -174,5 +166,5 @@ async def fetch_orders_by_status(status: OrderStatus, db=Depends(get_database)):
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail= f"Database error: {str(e)}",
         )

@@ -25,7 +25,7 @@ async def customer_signup(signup_data: SignUpSchema, db=Depends(get_database)):
         if existing_user:
             raise HTTPException(
                 status_code=400,
-                detail={"success": False, "message": "Email already registered"},
+                detail= "Email already registered",
             )
 
         # Hash the password
@@ -53,17 +53,14 @@ async def customer_signup(signup_data: SignUpSchema, db=Depends(get_database)):
             "user_id": str(result.inserted_id),
         }
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @customer_auth_router.post("/verify-otp")
 async def verify_customer_otp(
@@ -77,7 +74,7 @@ async def verify_customer_otp(
 
         if not user:
             raise HTTPException(
-                status_code=404, detail={"success": False, "message": "User not found"}
+                status_code=404, detail= "User not found"
             )
 
         # Check if OTP is valid and not expired
@@ -87,19 +84,19 @@ async def verify_customer_otp(
         if not otp_hash or not otp_created_at:
             raise HTTPException(
                 status_code=400,
-                detail={"success": False, "message": "No OTP exists for this user"},
+                detail="No OTP exists for this user",
             )
 
         # Check OTP expiration (15 minutes)
         if (datetime.now() - otp_created_at).total_seconds() > 900:
             raise HTTPException(
-                status_code=400, detail={"success": False, "message": "OTP has expired"}
+                status_code=400, detail="OTP has expired"
             )
 
         # Verify OTP
         if not verify_password(otp_verification.otp, otp_hash):
             raise HTTPException(
-                status_code=400, detail={"success": False, "message": "Invalid OTP"}
+                status_code=400, detail= "Invalid OTP"
             )
 
         # Mark user as verified
@@ -118,17 +115,14 @@ async def verify_customer_otp(
             "token_type": "bearer",
         }
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @customer_auth_router.post("/login")
 async def customer_login(login_data: LoginSchema, db=Depends(get_database)):
@@ -141,14 +135,14 @@ async def customer_login(login_data: LoginSchema, db=Depends(get_database)):
         if not user:
             raise HTTPException(
                 status_code=401,
-                detail={"success": False, "message": "Invalid credentials"},
+                detail="Invalid credentials",
             )
 
         # Verify password
         if not verify_password(login_data.password, user["password"]):
             raise HTTPException(
                 status_code=401,
-                detail={"success": False, "message": "Invalid credentials"},
+                detail= "Invalid credentials",
             )
 
         # Create access token
@@ -161,17 +155,14 @@ async def customer_login(login_data: LoginSchema, db=Depends(get_database)):
             "token_type": "bearer",
         }
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
-
+        raise e
 
 @customer_auth_router.post("/update-profile")
 async def update_customer_profile(
@@ -187,7 +178,7 @@ async def update_customer_profile(
 
         if not current_user:
             raise HTTPException(
-                status_code=404, detail={"success": False, "message": "User not found"}
+                status_code=404, detail= "User not found"
             )
 
         # Prepare update data
@@ -208,18 +199,16 @@ async def update_customer_profile(
         if result.modified_count == 0:
             raise HTTPException(
                 status_code=500,
-                detail={"success": False, "message": "Profile could not be updated"},
+                detail="Profile could not be updated",
             )
 
         return {"success": True, "message": "Customer profile updated successfully"}
 
+
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail={"success": False, "message": f"Database error: {str(e)}"},
+            detail=f"Database error: {str(e)}",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"success": False, "message": f"Unexpected error: {str(e)}"},
-        )
+        raise e
