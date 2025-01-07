@@ -135,7 +135,7 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Unexpected error: {str(e)}",
+            detail=f"{str(e)}",
         )
 
 
