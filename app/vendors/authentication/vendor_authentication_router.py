@@ -94,7 +94,7 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
         otp_created_at = user.get("otp_created_at")
 
         if not otp_hash or not otp_created_at:
-            return HTTPException(
+            raise HTTPException(
                 status_code=400,
                 detail="No OTP exists for this user",
             )
