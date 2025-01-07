@@ -73,7 +73,6 @@ async def vendor_signup(signup_data: SignUpSchema, db=Depends(get_database)):
         raise e
 
 
-
 @vendor_auth_router.post("/verify-otp")
 async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)):
     try:
@@ -83,9 +82,7 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
         )
 
         if not user:
-            raise HTTPException(
-                status_code=404, detail="User not found"
-            )
+            raise HTTPException(status_code=404, detail="User not found")
 
         # Check if OTP is valid and not expired
         otp_hash = user.get("otp")
@@ -99,15 +96,11 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
 
         # Check OTP expiration (e.g., 15 minutes)
         if (datetime.now() - otp_created_at).total_seconds() > 900:
-            raise HTTPException(
-                status_code=400, detail= "OTP has expired"
-            )
+            raise HTTPException(status_code=400, detail="OTP has expired")
 
         # Verify OTP
         if not verify_password(otp_verification.otp, otp_hash):
-            raise HTTPException(
-                status_code=400, detail= "Invalid OTP"
-            )
+            raise HTTPException(status_code=400, detail="Invalid OTP")
 
         # Mark user as verified
         await db[NEXTCHOW_COLLECTIONS.VENDOR_USER].update_one(
@@ -149,7 +142,7 @@ async def complete_vendor_profile(
         if not current_user.get("is_verified"):
             raise HTTPException(
                 status_code=403,
-                detail= "User not verified",
+                detail="User not verified",
             )
 
         # Prepare business profile data
@@ -184,7 +177,6 @@ async def complete_vendor_profile(
         raise e
 
 
-
 @vendor_auth_router.post("/login")
 async def vendor_login(login_data: LoginSchema, db=Depends(get_database)):
     try:
@@ -196,7 +188,7 @@ async def vendor_login(login_data: LoginSchema, db=Depends(get_database)):
         if not user:
             return HTTPException(
                 status_code=401,
-                detail= "Invalid credentials",
+                detail="Invalid credentials",
             )
 
         # Verify password
@@ -239,7 +231,7 @@ async def get_vendor_profile(
         if not vendor_profile:
             raise HTTPException(
                 status_code=404,
-                detail= "Vendor profile not found",
+                detail="Vendor profile not found",
             )
 
         # Return the profile data
@@ -248,7 +240,6 @@ async def get_vendor_profile(
             "message": "Profile retrieved successfully",
             "data": VendorProfile(**vendor_profile).dict(by_alias=True),
         }
-
 
     except PyMongoError as e:
         raise HTTPException(

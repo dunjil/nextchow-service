@@ -27,7 +27,7 @@ async def add_ride(
             return {"success": True, "message": "Menu successfully added"}
         return HTTPException(
             status_code=500,
-            detail= "Menu could not be added",
+            detail="Menu could not be added",
         )
 
     except PyMongoError as e:
@@ -37,6 +37,7 @@ async def add_ride(
         )
     except Exception as e:
         raise e
+
 
 # Fetch all menus for a vendor
 @menus_router.get("/menus")
@@ -54,7 +55,7 @@ async def fetch_menus(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -75,7 +76,7 @@ async def update_menu(
             return {"success": True, "message": "Menu successfully updated"}
         raise HTTPException(
             status_code=404,
-            detail= "Menu not found or no changes made",
+            detail="Menu not found or no changes made",
         )
 
     except PyMongoError as e:
@@ -85,6 +86,7 @@ async def update_menu(
         )
     except Exception as e:
         raise e
+
 
 # Delete menu endpoint
 @menus_router.delete("/menu/{menu_id}")
@@ -101,7 +103,7 @@ async def delete_menu(
             return {"success": True, "message": "Menu successfully deleted"}
         raise HTTPException(
             status_code=404,
-            detail= "Menu not found",
+            detail="Menu not found",
         )
 
     except PyMongoError as e:
@@ -111,6 +113,7 @@ async def delete_menu(
         )
     except Exception as e:
         raise e
+
 
 categories_router = APIRouter(prefix="/vendor", tags=["Vendor Menu Categories"])
 packaging_router = APIRouter(prefix="/vendor", tags=["Vendor Menu Packaging"])
@@ -132,12 +135,12 @@ async def add_category(
             return {"success": True, "message": "Category successfully added"}
         raise HTTPException(
             status_code=500,
-            detail= "Category could not be added",
+            detail="Category could not be added",
         )
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -157,7 +160,7 @@ async def fetch_categories(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -187,7 +190,7 @@ async def update_category(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -206,12 +209,12 @@ async def delete_category(
             return {"success": True, "message": "Category successfully deleted"}
         raise HTTPException(
             status_code=404,
-            detail= "Category not found",
+            detail="Category not found",
         )
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -231,12 +234,12 @@ async def add_packaging(
             return {"success": True, "message": "Packaging successfully added"}
         raise HTTPException(
             status_code=500,
-            detail= "Packaging could not be added",
+            detail="Packaging could not be added",
         )
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -256,7 +259,7 @@ async def fetch_packaging(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -294,7 +297,7 @@ async def update_packaging(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -313,10 +316,10 @@ async def delete_packaging(
             return {"success": True, "message": "Packaging successfully deleted"}
         raise HTTPException(
             status_code=404,
-            detail= "Packaging not found",
+            detail="Packaging not found",
         )
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )

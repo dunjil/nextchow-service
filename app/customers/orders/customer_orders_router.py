@@ -48,7 +48,7 @@ async def fetch_customer_orders(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -66,9 +66,7 @@ async def get_customer_order_details(
         )
 
         if not order:
-            raise HTTPException(
-                status_code=404, detail= "Order not found"
-            )
+            raise HTTPException(status_code=404, detail="Order not found")
 
         # Populate menu and packaging details
         for pack in order.get("packs", []):
@@ -88,7 +86,7 @@ async def get_customer_order_details(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -125,7 +123,7 @@ async def fetch_customer_orders_by_status(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -145,7 +143,7 @@ async def reorder_previous_order(
         if not original_order:
             raise HTTPException(
                 status_code=404,
-                detail= "Original order not found",
+                detail="Original order not found",
             )
 
         # Prepare new order data
@@ -168,7 +166,7 @@ async def reorder_previous_order(
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
 
 
@@ -193,12 +191,12 @@ async def cancel_order(
         if result.modified_count == 0:
             raise HTTPException(
                 status_code=400,
-                detail= "Order cannot be cancelled",
+                detail="Order cannot be cancelled",
             )
 
         return {"success": True, "message": "Order cancelled successfully"}
     except PyMongoError as e:
         raise HTTPException(
             status_code=500,
-            detail= f"Database error: {str(e)}",
+            detail=f"Database error: {str(e)}",
         )
