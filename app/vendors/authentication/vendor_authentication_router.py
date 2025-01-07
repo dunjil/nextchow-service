@@ -45,7 +45,7 @@ async def vendor_signup(signup_data: SignUpSchema, db=Depends(get_database)):
             {
                 "password": hashed_password,
                 "otp": get_password_hash(
-                    "123456"
+                    "1234"
                 ),  # Replace with `generate_otp()` if needed
                 "otp_created_at": datetime.now(),
             }
