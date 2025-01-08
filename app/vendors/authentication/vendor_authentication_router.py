@@ -157,7 +157,7 @@ async def complete_vendor_profile(
                 "$set": {
                     **business_data,
                     "updated_at": datetime.now(),
-                    "profile_completed": True,
+                    "is_onboarded": True,
                 }
             },
         )
