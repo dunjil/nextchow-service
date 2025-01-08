@@ -114,8 +114,10 @@ async def verify_otp(otp_verification: OTPVerification, db=Depends(get_database)
         return {
             "success": True,
             "message": "OTP verified successfully",
-            "access_token": access_token,
-            "token_type": "bearer",
+            "data": {
+                "access_token": access_token,
+                "token_type": "bearer",
+            },
         }
 
     except PyMongoError as e:
