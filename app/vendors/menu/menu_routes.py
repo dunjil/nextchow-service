@@ -25,7 +25,7 @@ async def add_ride(
         result = await db[NEXTCHOW_COLLECTIONS.MENU].insert_one(new_menu)
         if result.inserted_id:
             return {"success": True, "message": "Menu successfully added"}
-        return HTTPException(
+        raise HTTPException(
             status_code=500,
             detail="Menu could not be added",
         )
@@ -142,6 +142,8 @@ async def add_category(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Fetch all categories for a vendor
@@ -162,6 +164,8 @@ async def fetch_categories(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Update category endpoint
@@ -192,6 +196,8 @@ async def update_category(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Delete category endpoint
@@ -216,6 +222,8 @@ async def delete_category(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Add packaging endpoint
@@ -241,6 +249,8 @@ async def add_packaging(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Fetch all packaging for a vendor
@@ -261,6 +271,8 @@ async def fetch_packaging(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Update packaging endpoint
@@ -299,6 +311,8 @@ async def update_packaging(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Delete packaging endpoint
@@ -323,3 +337,5 @@ async def delete_packaging(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
