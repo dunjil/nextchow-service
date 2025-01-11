@@ -1,8 +1,10 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from pymongo.errors import PyMongoError
 
+from app.customers.models import SignUpModel
 from app.customers.schemas import LoginSchema, OTPVerification, SignUpSchema
 from app.general.utils.database import NEXTCHOW_COLLECTIONS, get_database
 from app.general.utils.oauth_service import (
@@ -32,14 +34,20 @@ async def customer_signup(signup_data: SignUpSchema, db=Depends(get_database)):
         hashed_password = get_password_hash(signup_data.password)
 
         # Prepare user data
-        user_data = signup_data.dict()
-        user_data["password"] = hashed_password
+        # Prepare user data
+        user_data = jsonable_encoder(SignUpModel(**signup_data.dict()))
 
         # Generate OTP
         # otp = generate_otp()
-        otp = "123456"  # For testing, replace with actual OTP generation
-        user_data["otp"] = get_password_hash(otp)
-        user_data["otp_created_at"] = datetime.now()
+        user_data.update(
+            {
+                "password": hashed_password,
+                "otp": get_password_hash(
+                    "1234"
+                ),  # Replace with `generate_otp()` if needed
+                "otp_created_at": datetime.now(),
+            }
+        )
 
         # Insert user with OTP
         result = await db[NEXTCHOW_COLLECTIONS.CUSTOMER_USER].insert_one(user_data)
@@ -85,7 +93,7 @@ async def verify_customer_otp(
                 detail="No OTP exists for this user",
             )
 
-        # Check OTP expiration (15 minutes)
+        # Check OTP expiration (e.g., 15 minutes)
         if (datetime.now() - otp_created_at).total_seconds() > 900:
             raise HTTPException(status_code=400, detail="OTP has expired")
 
@@ -100,13 +108,15 @@ async def verify_customer_otp(
         )
 
         # Create access token
-        access_token = create_access_token({"sub": str(user["_id"])})
+        access_token = create_access_token({"id": str(user["_id"])})
 
         return {
             "success": True,
             "message": "OTP verified successfully",
-            "access_token": access_token,
-            "token_type": "bearer",
+            "data": {
+                "access_token": access_token,
+                "token_type": "bearer",
+            },
         }
 
     except PyMongoError as e:
@@ -127,26 +137,26 @@ async def customer_login(login_data: LoginSchema, db=Depends(get_database)):
         )
 
         if not user:
-            raise HTTPException(
+            return HTTPException(
                 status_code=401,
                 detail="Invalid credentials",
             )
 
         # Verify password
         if not verify_password(login_data.password, user["password"]):
-            raise HTTPException(
+            return HTTPException(
                 status_code=401,
                 detail="Invalid credentials",
             )
 
         # Create access token
-        access_token = create_access_token({"sub": str(user["_id"])})
+        access_token = create_access_token({"id": user["_id"]})
 
         return {
             "success": True,
             "message": "Login successful",
             "access_token": access_token,
-            "token_type": "bearer",
+            "data": {key: value for key, value in user.items() if key != "password"},
         }
 
     except PyMongoError as e:
@@ -195,6 +205,39 @@ async def update_customer_profile(
             )
 
         return {"success": True, "message": "Customer profile updated successfully"}
+
+    except PyMongoError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Database error: {str(e)}",
+        )
+    except Exception as e:
+        raise e
+
+
+@customer_auth_router.get("/profile")
+async def get_customer_profile(
+    user: dict = Depends(get_current_user),
+    db=Depends(get_database),
+):
+    try:
+        # Fetch the customer's profile from the database
+        customer_profile = await db[NEXTCHOW_COLLECTIONS.CUSTOMER_USER].find_one(
+            {"_id": user.get("_id")}
+        )
+
+        if not customer_profile:
+            raise HTTPException(
+                status_code=404,
+                detail="Customer profile not found",
+            )
+
+        # Return the profile data
+        return {
+            "success": True,
+            "message": "Profile retrieved successfully",
+            "data": customer_profile,
+        }
 
     except PyMongoError as e:
         raise HTTPException(

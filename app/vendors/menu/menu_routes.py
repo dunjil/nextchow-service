@@ -57,6 +57,8 @@ async def fetch_menus(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 # Update menu endpoint

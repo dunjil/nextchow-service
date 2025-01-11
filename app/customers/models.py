@@ -1,31 +1,23 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, EmailStr, Field
 
+from app.customers.schemas import Location
 from app.general.utils.helpers import PyObjectId
-from app.vendors.schemas import Location, OperatingHours
 
 
-class VendorProfile(BaseModel):
+class SignUpModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     first_name: str
     last_name: str
     email: EmailStr
     password: str
-    role: str
-    store_name: str
-    cover_picture: str
-    profile_picture: str
-    description: str
     location: Location
     address: str
-    phone: str
-    order_type: str
-    profile_completed: bool = False
-    is_verified: bool = False
-    operating_hours: List[OperatingHours] = Field(default_factory=list)
+    role: str = Field(default="vendor")
+    is_verified: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: Optional[datetime] = None
 
@@ -33,26 +25,13 @@ class VendorProfile(BaseModel):
         allowed_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
-
-
-class VendorBankInformation(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    user_id: str
-    bank_code: str
-    bank_name: str
-    account_name: str
-    account_number: str
-
-    class Config:
-        allowed_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "bank_code": "033",
-                "bank_name": "Opay Digital Services",
-                "account_name": "John Doe",
-                "account_number": "023423432",
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "jd@gmail.com",
+                "password": "******************",
+                "role": "vendor",
             }
         }
 

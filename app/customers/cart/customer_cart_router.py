@@ -150,6 +150,8 @@ async def remove_pack_from_cart(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 @cart_router.post("/cart/checkout_and_initiate_payment")

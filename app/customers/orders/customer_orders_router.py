@@ -50,6 +50,8 @@ async def fetch_customer_orders(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 @customer_order_router.get("/orders/{order_id}")
@@ -88,6 +90,8 @@ async def get_customer_order_details(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 @customer_order_router.get("/orders/by-status/{status}")
@@ -125,6 +129,8 @@ async def fetch_customer_orders_by_status(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 @customer_order_router.post("/reorder/{order_id}")
@@ -168,6 +174,8 @@ async def reorder_previous_order(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e
 
 
 @customer_order_router.post("/cancel-order/{order_id}")
@@ -200,3 +208,5 @@ async def cancel_order(
             status_code=500,
             detail=f"Database error: {str(e)}",
         )
+    except Exception as e:
+        raise e

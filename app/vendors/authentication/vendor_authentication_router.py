@@ -240,7 +240,7 @@ async def get_vendor_profile(
         return {
             "success": True,
             "message": "Profile retrieved successfully",
-            "data": vendor_profile
+            "data": vendor_profile,
         }
 
     except PyMongoError as e:
