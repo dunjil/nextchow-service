@@ -22,11 +22,7 @@ async def fetch_vendors(
     db=Depends(get_database),
 ):
     try:
-        vendors = (
-            await db[NEXTCHOW_COLLECTIONS.MENU]
-            .find()
-            .to_list()
-        )
+        vendors = await db[NEXTCHOW_COLLECTIONS.MENU].find().to_list(length=100) 
         return {"success": True, "data": jsonable_encoder(vendors)}
     except PyMongoError as e:
         raise HTTPException(
